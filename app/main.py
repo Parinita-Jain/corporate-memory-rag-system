@@ -8,26 +8,20 @@ from rag.pipeline import ask_question
 from ingestion.ingest import run_ingestion
 from rag.config import VECTOR_DB_PATH
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
-    print("🚀 Server starting...")
+    print("Server starting...")
 
     try:
-        if not os.path.exists(VECTOR_DB_PATH):
-            print("Vector DB not found. Running ingestion...")
-            run_ingestion()
-        else:
-            print("Vector DB already exists. Skipping ingestion.")
+        print("Skipping ingestion on Render startup")
     except Exception as e:
         print("Startup Error:")
         print(traceback.format_exc())
 
     yield
 
-    print(" Server shutting down...")
-
+    print("Server shutting down...")
 
 app = FastAPI(lifespan=lifespan)
 
