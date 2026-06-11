@@ -1,17 +1,20 @@
-#from langchain_community.llms import Ollama
 import os
 from dotenv import load_dotenv
-
-load_dotenv()
-#print(os.getenv("GROQ_API_KEY"))
 from langchain_groq import ChatGroq
 
-def generate_answer(context, query):
+load_dotenv()
 
-   
+
+def generate_answer(context, query):
+    groq_key = os.getenv("GROQ_API_KEY")
+
+    print("GROQ KEY EXISTS:", bool(groq_key))
+    print("GROQ KEY START:", groq_key[:4] if groq_key else "NONE")
+    print("GROQ KEY LENGTH:", len(groq_key) if groq_key else 0)
+
     llm = ChatGroq(
-    model="llama-3.1-8b-instant",
-    api_key=os.getenv("GROQ_API_KEY")
+        model="llama-3.1-8b-instant",
+        api_key=groq_key
     )
 
     prompt = f"""
@@ -27,5 +30,4 @@ def generate_answer(context, query):
     {query}
     """
 
-    #return llm.invoke(prompt)
     return llm.invoke(prompt).content
