@@ -1,6 +1,6 @@
 from rag.retriever import get_documents
 from rag.generator import generate_answer
-
+"""
 def ask_question(query):
 
     docs = get_documents(query)
@@ -24,4 +24,25 @@ def ask_question(query):
     return {
         "answer": answer,
         "sources": sources
+    }
+"""
+def ask_question(query):
+
+    print("STEP 1")
+
+    docs = get_documents(query)
+
+    print("STEP 2")
+
+    context = "\n\n".join([doc.page_content for doc in docs])
+
+    print("STEP 3")
+
+    answer = generate_answer(context, query)
+
+    print("STEP 4")
+
+    return {
+        "answer": answer,
+        "sources": list(set([doc.metadata.get("source", "unknown") for doc in docs]))
     }
