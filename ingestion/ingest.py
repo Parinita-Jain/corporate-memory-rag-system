@@ -3,7 +3,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 import os
-
+#-------- for render---------
+os.makedirs("vectorstore", exist_ok=True)
+#----------------------------
 # FIXED PATH (important)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "../data")

@@ -1,6 +1,6 @@
 from langchain_chroma import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
-
+#from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 def get_documents(query):
 
     embeddings = HuggingFaceEmbeddings(
