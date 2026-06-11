@@ -1,13 +1,40 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from rag.pipeline import ask_question
+from contextlib import asynccontextmanager
+import os
 
-app = FastAPI()
+from rag.pipeline import ask_question
+from ingestion.ingest import run_ingestion
+from rag.config import VECTOR_DB_PATH
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+
+    print("🚀 Server starting...")
+
+    # Run ingestion only if vector DB doesn't exist
+    if not os.path.exists(VECTOR_DB_PATH):
+        print(" Vector DB not found. Running ingestion...")
+        run_ingestion()
+    else:
+        print(" Vector DB already exists. Skipping ingestion.")
+
+    yield
+
+    print(" Server shutting down...")
+
+
+app = FastAPI(lifespan=lifespan)
+
 
 class Query(BaseModel):
     question: str
 
+
 @app.post("/ask")
 async def ask(q: Query):
-    result = ask_question(q.question)
-    return result
+    try:
+        return ask_question(q.question)
+    except Exception as e:
+        return {"error": str(e)}

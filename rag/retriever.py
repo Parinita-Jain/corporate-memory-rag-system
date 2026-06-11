@@ -1,6 +1,7 @@
 from langchain_chroma import Chroma
 #from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
+from rag.config import VECTOR_DB_PATH
 def get_documents(query):
 
     embeddings = HuggingFaceEmbeddings(
@@ -8,7 +9,7 @@ def get_documents(query):
     )
 
     db = Chroma(
-        persist_directory="vectorstore",
+        persist_directory=VECTOR_DB_PATH,
         embedding_function=embeddings
     )
 
