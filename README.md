@@ -1,6 +1,6 @@
 # Corporate Memory — Production-Grade RAG System
 
-An enterprise-grade Retrieval-Augmented Generation (RAG) system designed to enable semantic search and grounded AI responses across internal corporate documents using LangChain, ChromaDB, Ollama, and Llama 3.
+An enterprise-grade Retrieval-Augmented Generation (RAG) system designed to enable semantic search and grounded AI responses across internal corporate documents using LangChain, Groq Llama 3.1, FastAPI, and PDF-based document retrieval..
 
 ## Business Problem
 
@@ -12,48 +12,50 @@ This project implements a production-style RAG architecture enabling semantic re
 
 ## Features
 
-- Multi-document ingestion
-- PDF and text processing
-- Semantic chunking
-- Vector database storage
-- Retrieval-Augmented Generation (RAG)
+- Multi-document PDF retrieval
+- Context-aware question answering
 - Source attribution
-- FastAPI serving
-- Local LLM execution via Ollama
-- Modular production architecture
+- FastAPI REST API
+- Groq Llama 3.1 integration
+- Modular RAG architecture
+- Cloud deployment on Render
 
 ## Tech Stack
 
 - Python
-- LangChain
-- ChromaDB
-- HuggingFace Embeddings
-- Ollama
-- Llama 3
 - FastAPI
-- Uvicorn
+- LangChain
+- Groq
+- Llama 3.1
+- PyPDF
+- Render
 
 ## Architecture
 
 User Query
-→ Semantic Retrieval
-→ ChromaDB Vector Search
-→ Context Injection
-→ Llama 3 Generation
-→ Grounded AI Response
+        ↓
+Document Retrieval
+        ↓
+Context Creation
+        ↓
+Groq Llama 3.1
+        ↓
+Grounded Response
+        ↓
+Source Attribution
+
+## Project Structure
+
+Corporate_memory/
+│
+├── app/
+├── rag/
+├── data/
+├── tests/
+├── requirements.txt
+└── README.md
 
 ## Installation
-
-```bash
-git clone <repo_url>
-
-cd Corporate_memory
-
-python -m venv venv
-
-venv\Scripts\activate
-
-pip install -r requirements.txt
 
 ```bash
 git clone https://github.com/parinitajain/corporate-memory-rag-system
@@ -66,47 +68,37 @@ venv\Scripts\activate
 
 pip install -r requirements.txt
 ```
-
----
-
-## Run Ollama
+Create `.env`
 
 ```bash
-ollama run llama3
+touch .env
 ```
 
-Keep this terminal open while running the FastAPI server.
+Add:
 
----
-
-## Run Document Ingestion
-
-```bash
-python ingestion/ingest.py
+```text
+GROQ_API_KEY=your_key
 ```
 
-This will:
-- load documents,
-- create embeddings,
-- store vectors in ChromaDB.
-
----
-
-## Start FastAPI
+Run:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
----
-
 ## Swagger UI
-
-Open:
 
 ```text
 http://127.0.0.1:8000/docs
-```
+
+---
+
+6. **Live Deployment**
+
+```markdown
+## Live Deployment
+
+https://corporate-memory-rag-system.onrender.com
 
 ---
 
@@ -133,15 +125,11 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## Note
-
-The vector database is generated dynamically during ingestion and is excluded from version control.
 
 ## Future Improvements
 
 - Docker deployment
 - Kubernetes orchestration
-- Hybrid search
 - OCR support
 - Authentication
 - AWS deployment
