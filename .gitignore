@@ -1,5 +1,7 @@
 venv/
+venv_rag/
 __pycache__/
+vectorstore/
 *.pyc
 .env
 .ipynb_checkpoints/
