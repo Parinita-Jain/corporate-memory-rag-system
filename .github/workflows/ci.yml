@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -20,8 +23,13 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Verify Project Structure
+      - name: Check Python Syntax
         run: |
-          echo "CI Pipeline Running Successfully"
+          python -m compileall app rag ingestion tests
+
+      - name: Run Tests
+        run: |
+          pytest -q
