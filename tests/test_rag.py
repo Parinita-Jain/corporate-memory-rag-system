@@ -1,8 +1,15 @@
-from rag.pipeline import ask_question
+from fastapi.testclient import TestClient
+from app.main import app
 
-query = "What is this document about?"
+client = TestClient(app)
 
-result = ask_question(query)
 
-print("\nANSWER:\n", result["answer"])
-print("\nSOURCES:\n", result["sources"])
+def test_home():
+    response = client.get("/")
+    assert response.status_code == 200
+
+
+def test_health():
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "healthy"
