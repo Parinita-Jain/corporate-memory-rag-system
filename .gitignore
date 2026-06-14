@@ -1,5 +1,7 @@
 venv/
 venv_rag/
+.venv/
+.venv-rag/
 __pycache__/
 vectorstore/
 *.pyc
