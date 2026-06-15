@@ -30,7 +30,7 @@ def chunk_text(text, source, chunk_size=1200, overlap=200):
         if chunk.strip():
             chunks.append(
                 SimpleDocument(
-                    page_content=chunk,
+                    page_content=f"Source document: {source}\n\n{chunk}",
                     metadata={"source": source}
                 )
             )
@@ -62,10 +62,12 @@ def load_documents():
     docs = []
 
     for filename in os.listdir(DATA_DIR):
+        print("FOUND FILE:", filename)
         path = os.path.join(DATA_DIR, filename)
 
         if filename.lower().endswith(".pdf"):
             text = load_pdf(path)
+            print("PDF TEXT LENGTH:", filename, len(text))
             docs.extend(chunk_text(text, filename))
 
         elif filename.lower().endswith(".txt"):
@@ -81,7 +83,14 @@ def load_documents():
 
 def score_document(query, doc):
     query_words = set(re.findall(r"\w+", query.lower()))
-    doc_words = set(re.findall(r"\w+", doc.page_content.lower()))
+
+    searchable_text = (
+        doc.page_content.lower()
+        + " "
+        + doc.metadata.get("source", "").lower()
+    )
+
+    doc_words = set(re.findall(r"\w+", searchable_text))
 
     if not query_words:
         return 0
