@@ -9,6 +9,8 @@ The project is maintained in two versions:
 | `main`         | Lightweight cloud deployment optimized for Render Free     |
 | `advanced-rag` | Full semantic RAG using ChromaDB and Sentence Transformers |
 
+The live demo is running from the `main` branch.
+
 ---
 
 # Live Demo
@@ -21,9 +23,13 @@ https://corporate-memory-rag-system.onrender.com
 
 https://corporate-memory-rag-system.onrender.com/docs
 
-## Ask Endpoint
+---
 
-https://corporate-memory-rag-system.onrender.com/docs#/default/ask_ask_post
+## Note
+
+The live Render deployment uses the lightweight `main` branch.
+
+For full semantic retrieval using ChromaDB, Sentence Transformers, and vector embeddings, use the `advanced-rag` branch locally.
 
 ---
 
@@ -37,35 +43,58 @@ Organizations store critical information across:
 * Training material
 * Knowledge bases
 
-Traditional keyword search often fails to retrieve the most relevant information.
+Traditional keyword search systems often fail to retrieve the most relevant information and frequently lack contextual understanding.
 
-This project provides a Retrieval-Augmented Generation (RAG) workflow that:
+This project implements a Retrieval-Augmented Generation (RAG) workflow that:
 
 1. Retrieves relevant document content
 2. Builds contextual information
-3. Uses a Large Language Model to generate answers
+3. Uses a Large Language Model to generate grounded answers
 4. Returns source references
 
 This reduces hallucinations and improves answer reliability.
 
 ---
 
-# Branch Strategy
+# Retrieval Modes
 
-## Main Branch (Render Deployment)
+This project provides two retrieval modes through separate Git branches.
 
-Optimized for Render Free Tier (512 MB RAM).
+## main — Lightweight Cloud Deployment
+
+The `main` branch is deployed on Render Free.
+
+### Technologies
+
+* FastAPI
+* PyPDF
+* Groq Llama 3.1
+* Pydantic
+* Python
 
 ### Features
 
-* FastAPI API
 * PDF and TXT document support
-* Lightweight retrieval
-* Groq Llama 3.1 generation
+* Keyword-based retrieval
 * Source attribution
-* Cloud deployment
+* FastAPI REST API
+* Cloud deployment on Render
 
-### Why a Lightweight Version?
+### Workflow
+
+```text
+User Question
+       ↓
+Keyword Retrieval
+       ↓
+Relevant Document Chunks
+       ↓
+Groq Llama 3.1
+       ↓
+Answer + Sources
+```
+
+### Why This Version Exists
 
 Render Free instances provide:
 
@@ -82,74 +111,81 @@ Running:
 
 can exceed memory limits.
 
-The lightweight version avoids those components to remain deployable on free infrastructure.
+This version avoids memory-intensive components while preserving the same RAG workflow and API interface.
 
 ---
 
-## Advanced-RAG Branch
+## advanced-rag — Full Semantic RAG
 
-Full semantic Retrieval-Augmented Generation implementation.
+The `advanced-rag` branch contains the complete semantic Retrieval-Augmented Generation implementation.
 
-### Features
+### Technologies
 
 * LangChain
 * ChromaDB
 * Sentence Transformers
 * HuggingFace Embeddings
-* Vector Database
-* Semantic Search
-* Persistent Vector Store
 * Groq Llama 3.1
+* FastAPI
+
+### Features
+
+* Semantic chunking
+* Vector embeddings
+* Persistent vector store
+* ChromaDB
+* Semantic similarity search
+* Source attribution
 
 ### Workflow
 
 ```text
 Documents
-    ↓
+      ↓
 Chunking
-    ↓
+      ↓
 Embeddings
-    ↓
+      ↓
 ChromaDB
-    ↓
+      ↓
 Semantic Retrieval
-    ↓
-Groq LLM
-    ↓
+      ↓
+Groq Llama 3.1
+      ↓
 Answer + Sources
 ```
 
-Recommended for:
+### Run Full Semantic RAG Locally
 
-* Local development
-* Demonstrations
-* Interviews
-* Production environments with sufficient memory
+```bash
+git checkout advanced-rag
 
----
+python -m venv venv_rag
 
-# Technology Stack
+venv_rag\Scripts\activate
 
-## Deployed Version (main)
+pip install -r requirements.txt
 
-* Python
-* FastAPI
-* Pydantic
-* PyPDF
-* Groq
-* Llama 3.1
-* Render
+python -m ingestion.ingest
 
-## Advanced Version (advanced-rag)
+uvicorn app.main:app --reload
+```
 
-* Python
-* FastAPI
-* LangChain
-* ChromaDB
-* Sentence Transformers
-* HuggingFace Embeddings
-* Groq
-* Llama 3.1
+Open:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+The command:
+
+```bash
+python -m ingestion.ingest
+```
+
+creates the local `vectorstore/` directory used by ChromaDB.
+
+The generated vector database is intentionally excluded from GitHub through `.gitignore`.
 
 ---
 
@@ -176,6 +212,31 @@ Source Attribution
 
 ---
 
+# Technology Stack
+
+## Deployed Version (`main`)
+
+* Python
+* FastAPI
+* Pydantic
+* PyPDF
+* Groq
+* Llama 3.1
+* Render
+
+## Semantic Version (`advanced-rag`)
+
+* Python
+* FastAPI
+* LangChain
+* ChromaDB
+* Sentence Transformers
+* HuggingFace Embeddings
+* Groq
+* Llama 3.1
+
+---
+
 # Project Structure
 
 ```text
@@ -183,34 +244,27 @@ Corporate_memory/
 
 ├── .github/
 │   └── workflows/
+│       └── ci.yml
 │
 ├── app/
-│   ├── __init__.py
 │   └── main.py
 │
 ├── data/
-│   ├── Data Analysis of Cab Booking Systems.pdf
-│   ├── Modulewise Exam Structure - 2025-26 v2.pdf
+│   ├── *.pdf
 │   └── *.txt
 │
 ├── ingestion/
-│   ├── __init__.py
 │   └── ingest.py
 │
 ├── rag/
-│   ├── __init__.py
 │   ├── config.py
 │   ├── generator.py
 │   ├── pipeline.py
 │   └── retriever.py
 │
 ├── screenshots/
-│   ├── RenderDeployment.png
-│   ├── RenderOutput.png
-│   └── SuccessfullyDeployedOnRender.png
 │
 ├── tests/
-│   ├── __init__.py
 │   └── test_rag.py
 │
 ├── requirements.txt
@@ -231,13 +285,34 @@ git clone https://github.com/Parinita-Jain/corporate-memory-rag-system.git
 cd corporate-memory-rag-system
 ```
 
+The repository contains two branches:
+
+| Branch | Purpose |
+|----------|----------|
+| `main` | Lightweight Render deployment |
+| `advanced-rag` | Full semantic RAG with ChromaDB |
+
+By default, Git clones the `main` branch.
+
+To use the deployed lightweight version:
+
+```bash
+git checkout main
+```
+
+To use the full semantic RAG version:
+
+```bash
+git checkout advanced-rag
+```
+
 Create a virtual environment:
 
 ```bash
 python -m venv venv
 ```
 
-Activate it on Windows:
+Activate:
 
 ```bash
 venv\Scripts\activate
@@ -258,18 +333,29 @@ Create a `.env` file:
 ```env
 GROQ_API_KEY=your_groq_api_key
 ```
-
 ---
 
 # Run Locally
 
-Start FastAPI:
+## Lightweight Version (main)
 
 ```bash
+git checkout main
+
 uvicorn app.main:app --reload
 ```
 
-Open Swagger UI:
+## Full Semantic RAG (advanced-rag)
+
+```bash
+git checkout advanced-rag
+
+python -m ingestion.ingest
+
+uvicorn app.main:app --reload
+```
+
+Open:
 
 ```text
 http://127.0.0.1:8000/docs
@@ -308,13 +394,13 @@ POST /ask
 
 # Health Check
 
-Endpoint:
+## Endpoint
 
 ```http
 GET /health
 ```
 
-Response:
+### Response
 
 ```json
 {
@@ -340,43 +426,76 @@ uvicorn app.main:app --host 0.0.0.0 --port $PORT
 
 ### Environment Variable
 
-Create a `.env` file locally:
-
 ```env
 GROQ_API_KEY=your_groq_api_key
 ```
 
 ---
 
-# Screenshots
+# CI/CD
 
-Include screenshots inside:
+GitHub Actions automatically runs on every push and pull request to the `main` branch.
+
+The workflow:
+
+* Checks out the repository
+* Sets up Python 3.11
+* Installs dependencies
+* Performs syntax validation
+* Runs automated tests
+
+Workflow file:
 
 ```text
-screenshots/
+.github/workflows/ci.yml
 ```
 
-Examples:
+---
 
-* Render deployment success
-* Swagger UI
-* API response example
-* Successful Render deployment
+# Testing
+
+Run tests locally:
+
+```bash
+pytest -q
+```
+
+Current tests verify:
+
+* Home endpoint (`/`)
+* Health endpoint (`/health`)
+* API startup validation
+
+---
+
+# Engineering Tradeoff
+
+The original implementation used:
+
+* ChromaDB
+* Sentence Transformers
+* Local embeddings
+
+During deployment testing on Render Free (512 MB RAM), the service exceeded available memory and experienced container restarts.
+
+To ensure reliable cloud deployment, the production (`main`) branch was redesigned to use lightweight retrieval while preserving the same API contract and RAG workflow.
+
+The full semantic implementation remains available in the `advanced-rag` branch for local execution and demonstration purposes.
 
 ---
 
 # Future Improvements
 
 * Hybrid Search
-* Reranking
-* Conversational Memory
-* Authentication
+* Retrieval Reranking
 * OCR Support
+* Conversational Memory
+* Authentication & Authorization
 * Docker Deployment
 * Kubernetes Deployment
 * AWS Deployment
-* Advanced Semantic Search
-* External Vector Databases
+* Managed Vector Databases
+* Production Monitoring
 
 ---
 
@@ -388,3 +507,4 @@ Applied AI Engineer | Machine Learning Engineer | Data Science Trainer
 
 GitHub:
 https://github.com/Parinita-Jain/corporate-memory-rag-system
+
